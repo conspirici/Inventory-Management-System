@@ -18,25 +18,26 @@ public class AdminDashboardView extends JFrame {
     public AdminDashboardView(int currentUserId) {
         this.currentUserId = currentUserId;
         setTitle("Admin Dashboard - GrocerFlow");
-        setSize(800, 600);
+        setSize(820, 620);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(null);
-        getContentPane().setBackground(new Color(245, 245, 255));
+        getContentPane().setBackground(new Color(240, 240, 240));
 
         initUI();
         setVisible(true);
     }
 
     private void initUI() {
-        JLabel header = new JLabel("Welcome Admin", SwingConstants.CENTER);
-        header.setFont(new Font("SansSerif", Font.BOLD, 24));
+        JLabel header = new JLabel("Welcome, Admin", SwingConstants.CENTER);
+        header.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        header.setForeground(Color.DARK_GRAY);
         header.setBounds(250, 20, 300, 40);
         add(header);
 
         JPanel container = new JPanel(null);
-        container.setBounds(50, 80, 700, 400);
-        container.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        container.setBounds(50, 80, 700, 420);
+        container.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
         container.setBackground(Color.WHITE);
         add(container);
 
@@ -46,7 +47,6 @@ public class AdminDashboardView extends JFrame {
                 "User Approvals", "Generate Report"
         };
 
-        // Lambdas to construct views
         Supplier<JFrame>[] views = new Supplier[]{
                 () -> new AddProductView(currentUserId),
                 ViewInventoryView::new,
@@ -58,29 +58,47 @@ public class AdminDashboardView extends JFrame {
 
         for (int i = 0; i < labels.length; i++) {
             JPanel card = createDraggableCard(labels[i], views[i]);
-            card.setBounds((i % 2 == 0 ? 50 : 370), (i / 2) * 120 + 20, 250, 100);
+            card.setBounds((i % 2 == 0 ? 50 : 370), (i / 2) * 130 + 20, 280, 100);
             container.add(card);
         }
 
         JButton logoutBtn = new JButton("Logout");
-        logoutBtn.setBounds(650, 500, 100, 30);
-        logoutBtn.setBackground(Color.RED);
+        logoutBtn.setBounds(650, 520, 100, 35);
+        logoutBtn.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        logoutBtn.setBackground(new Color(70, 70, 70));
         logoutBtn.setForeground(Color.WHITE);
+        logoutBtn.setBorder(BorderFactory.createEmptyBorder());
+        logoutBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        logoutBtn.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) {
+                logoutBtn.setBackground(new Color(45, 45, 45));
+            }
+
+            public void mouseExited(MouseEvent e) {
+                logoutBtn.setBackground(new Color(70, 70, 70));
+            }
+        });
+
         logoutBtn.addActionListener(e -> {
             dispose();
             new LoginView();
         });
+
         add(logoutBtn);
     }
 
     private JPanel createDraggableCard(String title, Supplier<JFrame> viewSupplier) {
         JPanel card = new JPanel();
         card.setLayout(new BorderLayout());
-        card.setBackground(new Color(200, 220, 255));
-        card.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+        card.setBackground(new Color(230, 230, 240));
+        card.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Color.GRAY, 1),
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)
+        ));
 
         JLabel label = new JLabel(title, SwingConstants.CENTER);
-        label.setFont(new Font("SansSerif", Font.BOLD, 16));
+        label.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        label.setForeground(Color.DARK_GRAY);
         card.add(label, BorderLayout.CENTER);
 
         card.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -96,7 +114,6 @@ public class AdminDashboardView extends JFrame {
             }
         });
 
-        // Optional drag behavior
         final Point clickPoint = new Point();
         card.addMouseMotionListener(new MouseAdapter() {
             public void mouseDragged(MouseEvent e) {
@@ -104,15 +121,15 @@ public class AdminDashboardView extends JFrame {
                 card.setLocation(p.x + e.getX() - clickPoint.x, p.y + e.getY() - clickPoint.y);
             }
         });
+
         card.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 clickPoint.setLocation(e.getPoint());
                 Container parent = card.getParent();
-if (parent != null) {
-    parent.setComponentZOrder(card, 0);
-    parent.repaint();
-}
-
+                if (parent != null) {
+                    parent.setComponentZOrder(card, 0);
+                    parent.repaint();
+                }
                 card.repaint();
             }
         });

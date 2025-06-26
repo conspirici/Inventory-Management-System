@@ -10,41 +10,40 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.lang.reflect.Constructor;
 
 public class EmployeeDashboardView extends JFrame {
 
     private final int userId;
 
-    // NEW constructor accepting userId
     public EmployeeDashboardView(int userId) {
         this.userId = userId;
         setTitle("Employee Dashboard - GrocerFlow");
-        setSize(800, 600);
+        setSize(820, 620);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(null);
-        getContentPane().setBackground(new Color(250, 250, 255));
+        getContentPane().setBackground(new Color(240, 240, 240));
 
         initUI();
         setVisible(true);
     }
 
-    // Optional no-arg constructor for testing
     public EmployeeDashboardView() {
-        this(0); // Default userId (not recommended for production)
+        this(0);
     }
 
     private void initUI() {
-        // Use userId in the header if available
-        String headerText = "Welcome Employee" + (userId != 0 ? " #" + userId : "");
+        String headerText = "Welcome, Employee" + (userId != 0 ? " #" + userId : "");
         JLabel header = new JLabel(headerText, SwingConstants.CENTER);
-        header.setFont(new Font("SansSerif", Font.BOLD, 24));
-        header.setBounds(250, 20, 300, 40);
+        header.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        header.setForeground(Color.DARK_GRAY);
+        header.setBounds(250, 20, 320, 40);
         add(header);
 
         JPanel container = new JPanel(null);
-        container.setBounds(50, 80, 700, 400);
-        container.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        container.setBounds(50, 80, 700, 420);
+        container.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
         container.setBackground(Color.WHITE);
         add(container);
 
@@ -64,39 +63,60 @@ public class EmployeeDashboardView extends JFrame {
 
         for (int i = 0; i < labels.length; i++) {
             JPanel card = createDraggableCard(labels[i], views[i]);
-            // Position cards in two columns
-            card.setBounds((i % 2 == 0 ? 50 : 370), (i / 2) * 120 + 20, 250, 100);
+            card.setBounds((i % 2 == 0 ? 50 : 370), (i / 2) * 130 + 20, 280, 100);
             container.add(card);
         }
 
         JButton logoutBtn = new JButton("Logout");
-        logoutBtn.setBounds(650, 500, 100, 30);
-        logoutBtn.setBackground(Color.RED);
+        logoutBtn.setBounds(650, 520, 100, 35);
+        logoutBtn.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        logoutBtn.setBackground(new Color(70, 70, 70));
         logoutBtn.setForeground(Color.WHITE);
+        logoutBtn.setBorder(BorderFactory.createEmptyBorder());
+        logoutBtn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        logoutBtn.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) {
+                logoutBtn.setBackground(new Color(45, 45, 45));
+            }
+
+            public void mouseExited(MouseEvent e) {
+                logoutBtn.setBackground(new Color(70, 70, 70));
+            }
+        });
+
         logoutBtn.addActionListener(e -> {
             dispose();
             new LoginView();
         });
+
         add(logoutBtn);
     }
 
     private JPanel createDraggableCard(String title, Class<?> viewClass) {
         JPanel card = new JPanel();
         card.setLayout(new BorderLayout());
-        card.setBackground(new Color(220, 240, 255));
-        card.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
+        card.setBackground(new Color(230, 230, 240));
+        card.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Color.GRAY, 1),
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)
+        ));
 
         JLabel label = new JLabel(title, SwingConstants.CENTER);
-        label.setFont(new Font("SansSerif", Font.BOLD, 16));
+        label.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        label.setForeground(Color.DARK_GRAY);
         card.add(label, BorderLayout.CENTER);
 
         card.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         card.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 try {
-                    // For simplicity, we use the no-arg constructor of each view.
-                    // If any of these views also require a userId, you'll need to adjust similarly.
-                    JFrame nextView = (JFrame) viewClass.getDeclaredConstructor().newInstance();
+                    JFrame nextView;
+                    try {
+                        Constructor<?> constructor = viewClass.getDeclaredConstructor(int.class);
+                        nextView = (JFrame) constructor.newInstance(userId);
+                    } catch (NoSuchMethodException ex) {
+                        nextView = (JFrame) viewClass.getDeclaredConstructor().newInstance();
+                    }
                     nextView.setVisible(true);
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -112,10 +132,15 @@ public class EmployeeDashboardView extends JFrame {
                 card.setLocation(p.x + e.getX() - clickPoint.x, p.y + e.getY() - clickPoint.y);
             }
         });
+
         card.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 clickPoint.setLocation(e.getPoint());
-                card.setComponentZOrder(card, 0);
+                Container parent = card.getParent();
+                if (parent != null) {
+                    parent.setComponentZOrder(card, 0);
+                    parent.repaint();
+                }
                 card.repaint();
             }
         });
@@ -124,6 +149,6 @@ public class EmployeeDashboardView extends JFrame {
     }
 
     public static void main(String[] args) {
-        new EmployeeDashboardView(); // For testing, calls the no-arg constructor (userId=0)
+        new EmployeeDashboardView(); // For testing
     }
 }

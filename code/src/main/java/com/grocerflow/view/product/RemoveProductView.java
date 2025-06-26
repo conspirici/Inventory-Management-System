@@ -15,11 +15,11 @@ public class RemoveProductView extends JFrame {
 
     public RemoveProductView() {
         setTitle("Remove Product - GrocerFlow");
-        setSize(450, 350);
+        setSize(480, 360);
         setLocationRelativeTo(null);
         setLayout(null);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        getContentPane().setBackground(new Color(255, 245, 245));
+        getContentPane().setBackground(new Color(240, 240, 240)); // light gray background
 
         initUI();
         setVisible(true);
@@ -27,37 +27,54 @@ public class RemoveProductView extends JFrame {
 
     private void initUI() {
         JLabel title = new JLabel("Remove Product", SwingConstants.CENTER);
-        title.setFont(new Font("SansSerif", Font.BOLD, 20));
-        title.setBounds(100, 20, 250, 30);
+        title.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        title.setForeground(new Color(50, 50, 50));
+        title.setBounds(90, 20, 300, 30);
         add(title);
 
-        JLabel idLabel = new JLabel("Product ID:");
-        idLabel.setBounds(50, 80, 100, 25);
-        add(idLabel);
+        JPanel formPanel = new JPanel(null);
+        formPanel.setBounds(40, 70, 390, 180);
+        formPanel.setBackground(Color.WHITE);
+        formPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+        add(formPanel);
 
-        productIdField.setBounds(160, 80, 200, 30);
-        add(productIdField);
-        makeDraggable(productIdField);
+        JLabel idLabel = new JLabel("Product ID:");
+        idLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        idLabel.setBounds(30, 20, 120, 25);
+        formPanel.add(idLabel);
+
+        productIdField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        productIdField.setBounds(150, 20, 200, 30);
+        formPanel.add(productIdField);
 
         JLabel nameLabel = new JLabel("OR Product Name:");
-        nameLabel.setBounds(50, 130, 120, 25);
-        add(nameLabel);
+        nameLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        nameLabel.setBounds(30, 70, 130, 25);
+        formPanel.add(nameLabel);
 
-        productNameField.setBounds(160, 130, 200, 30);
-        add(productNameField);
-        makeDraggable(productNameField);
+        productNameField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        productNameField.setBounds(150, 70, 200, 30);
+        formPanel.add(productNameField);
 
         JButton removeButton = new JButton("Remove");
-        removeButton.setBounds(90, 200, 120, 35);
-        removeButton.setBackground(new Color(220, 20, 60));
+        removeButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        removeButton.setBackground(new Color(220, 53, 69)); // soft red
         removeButton.setForeground(Color.WHITE);
+        removeButton.setFocusPainted(false);
+        removeButton.setBounds(50, 120, 130, 35);
+        removeButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         removeButton.addActionListener(this::handleRemoveProduct);
-        add(removeButton);
+        formPanel.add(removeButton);
 
         JButton clearButton = new JButton("Clear");
-        clearButton.setBounds(230, 200, 120, 35);
+        clearButton.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        clearButton.setBackground(new Color(200, 200, 200));
+        clearButton.setForeground(Color.DARK_GRAY);
+        clearButton.setFocusPainted(false);
+        clearButton.setBounds(200, 120, 130, 35);
+        clearButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         clearButton.addActionListener(e -> clearFields());
-        add(clearButton);
+        formPanel.add(clearButton);
     }
 
     private void handleRemoveProduct(ActionEvent e) {
@@ -65,7 +82,7 @@ public class RemoveProductView extends JFrame {
         String nameText = productNameField.getText().trim();
 
         if (idText.isEmpty() && nameText.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please enter either Product ID or Name.");
+            JOptionPane.showMessageDialog(this, "Please enter either Product ID or Name.", "Missing Input", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -76,7 +93,7 @@ public class RemoveProductView extends JFrame {
                 int id = Integer.parseInt(idText);
                 success = productController.removeProductById(id);
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "Invalid Product ID.");
+                JOptionPane.showMessageDialog(this, "Invalid Product ID.", "Input Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
         } else {
@@ -84,33 +101,16 @@ public class RemoveProductView extends JFrame {
         }
 
         if (success) {
-            JOptionPane.showMessageDialog(this, "Product removed successfully.");
+            JOptionPane.showMessageDialog(this, "Product removed successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
             clearFields();
         } else {
-            JOptionPane.showMessageDialog(this, "Failed to remove product.");
+            JOptionPane.showMessageDialog(this, "Failed to remove product.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void clearFields() {
         productIdField.setText("");
         productNameField.setText("");
-    }
-
-    private void makeDraggable(JComponent comp) {
-        final Point click = new Point();
-        comp.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
-                click.setLocation(e.getPoint());
-            }
-        });
-
-        comp.addMouseMotionListener(new MouseAdapter() {
-            public void mouseDragged(MouseEvent e) {
-                Point p = comp.getLocation();
-                comp.setLocation(p.x + e.getX() - click.x,
-                                 p.y + e.getY() - click.y);
-            }
-        });
     }
 
     public static void main(String[] args) {

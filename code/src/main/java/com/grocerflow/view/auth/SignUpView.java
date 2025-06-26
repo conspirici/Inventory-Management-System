@@ -5,7 +5,6 @@ import com.grocerflow.controller.AuthController;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class SignUpView extends JFrame {
 
@@ -23,7 +22,7 @@ public class SignUpView extends JFrame {
         authController = new AuthController();
 
         setTitle("GrocerFlow - Sign Up");
-        setSize(450, 400);
+        setSize(480, 420);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(null);
@@ -34,70 +33,107 @@ public class SignUpView extends JFrame {
     }
 
     private void initComponents() {
+        Font titleFont = new Font("Segoe UI", Font.BOLD, 20);
+        Font labelFont = new Font("Segoe UI", Font.PLAIN, 14);
+        Font inputFont = new Font("Segoe UI", Font.PLAIN, 13);
+
         JLabel titleLabel = new JLabel("Create a New Account");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        titleLabel.setBounds(120, 20, 250, 30);
+        titleLabel.setFont(titleFont);
+        titleLabel.setForeground(Color.DARK_GRAY);
+        titleLabel.setBounds(120, 25, 300, 30);
         add(titleLabel);
 
         JLabel usernameLabel = new JLabel("Username:");
+        usernameLabel.setFont(labelFont);
         usernameLabel.setBounds(50, 70, 100, 25);
         add(usernameLabel);
 
         usernameField = new JTextField();
-        usernameField.setBounds(160, 70, 200, 25);
+        usernameField.setFont(inputFont);
+        usernameField.setBounds(180, 70, 200, 28);
+        usernameField.setBackground(Color.WHITE);
         add(usernameField);
 
         JLabel emailLabel = new JLabel("Email:");
+        emailLabel.setFont(labelFont);
         emailLabel.setBounds(50, 110, 100, 25);
         add(emailLabel);
 
         emailField = new JTextField();
-        emailField.setBounds(160, 110, 200, 25);
+        emailField.setFont(inputFont);
+        emailField.setBounds(180, 110, 200, 28);
+        emailField.setBackground(Color.WHITE);
         add(emailField);
 
         JLabel passwordLabel = new JLabel("Password:");
+        passwordLabel.setFont(labelFont);
         passwordLabel.setBounds(50, 150, 100, 25);
         add(passwordLabel);
 
         passwordField = new JPasswordField();
-        passwordField.setBounds(160, 150, 200, 25);
+        passwordField.setFont(inputFont);
+        passwordField.setBounds(180, 150, 200, 28);
+        passwordField.setBackground(Color.WHITE);
         add(passwordField);
 
         JLabel confirmPasswordLabel = new JLabel("Confirm Password:");
+        confirmPasswordLabel.setFont(labelFont);
         confirmPasswordLabel.setBounds(50, 190, 130, 25);
         add(confirmPasswordLabel);
 
         confirmPasswordField = new JPasswordField();
-        confirmPasswordField.setBounds(190, 190, 170, 25);
+        confirmPasswordField.setFont(inputFont);
+        confirmPasswordField.setBounds(180, 190, 200, 28);
+        confirmPasswordField.setBackground(Color.WHITE);
         add(confirmPasswordField);
 
         JLabel roleLabel = new JLabel("Role:");
+        roleLabel.setFont(labelFont);
         roleLabel.setBounds(50, 230, 100, 25);
         add(roleLabel);
 
         String[] roles = { "employee", "admin" };
         roleComboBox = new JComboBox<>(roles);
-        roleComboBox.setBounds(160, 230, 200, 25);
+        roleComboBox.setFont(inputFont);
+        roleComboBox.setBounds(180, 230, 200, 28);
+        roleComboBox.setBackground(Color.WHITE);
         add(roleComboBox);
 
         signUpButton = new JButton("Sign Up");
-        signUpButton.setBounds(90, 290, 120, 30);
+        signUpButton.setBounds(90, 300, 120, 35);
+        signUpButton.setFont(labelFont);
+        styleButton(signUpButton);
         add(signUpButton);
 
         backButton = new JButton("Back to Login");
-        backButton.setBounds(230, 290, 140, 30);
+        backButton.setBounds(230, 300, 140, 35);
+        backButton.setFont(labelFont);
+        styleButton(backButton);
         add(backButton);
 
         // Action Listeners
-        signUpButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                handleSignUp();
-            }
-        });
+        signUpButton.addActionListener((ActionEvent e) -> handleSignUp());
 
         backButton.addActionListener(e -> {
             dispose();
             new LoginView();
+        });
+    }
+
+    private void styleButton(JButton button) {
+        button.setBackground(Color.decode("#4A4A4A"));
+        button.setForeground(Color.WHITE);
+        button.setBorder(BorderFactory.createEmptyBorder());
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(Color.decode("#2E2E2E"));
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(Color.decode("#4A4A4A"));
+            }
         });
     }
 
@@ -114,7 +150,6 @@ public class SignUpView extends JFrame {
         }
 
         String result = authController.signUp(username, password, email, role);
-
 
         if (result.startsWith("success")) {
             JOptionPane.showMessageDialog(this, "Sign up successful! Await admin approval.", "Success", JOptionPane.INFORMATION_MESSAGE);

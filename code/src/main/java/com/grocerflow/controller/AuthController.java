@@ -38,7 +38,7 @@ public class AuthController {
         user.setUsername(username);
         user.setPasswordHash(hashedPassword);
         user.setEmail(email);
-        user.setRole(role); // "admin" or "employee"
+        user.setRole(role); 
         user.setStatus("pending");
 
         boolean success = userDAO.createUser(user);

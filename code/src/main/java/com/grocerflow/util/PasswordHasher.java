@@ -16,7 +16,7 @@ public class PasswordHasher {
             }
             return sb.toString();
         } catch (NoSuchAlgorithmException e) {
-            System.err.println("❌ Error hashing password: " + e.getMessage());
+            System.err.println("Error hashing password: " + e.getMessage());
             return null;
         }
     }
